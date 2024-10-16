@@ -1,0 +1,13 @@
+services:
+  postgresql:
+    image: postgres:latest
+    container_name: trajectologist_bd
+    ports:
+      - 5435:5432
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DATABASE=trajectologist
+    command: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
