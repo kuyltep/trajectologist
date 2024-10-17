@@ -9,6 +9,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
+    .addBearerAuth({ type: 'http', scheme: 'Bearer', in: 'header' }, 'auth')
     .setTitle('Trajectologist example')
     .setDescription('The trajectologist API description')
     .setVersion('1.0')
