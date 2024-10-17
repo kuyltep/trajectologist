@@ -7,7 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginUserDto, RegisterUserDto } from './dto/auth.user.dto';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
-import { GetShortUserDto } from 'src/user/dto/get.user.dto';
+import { GetAllUserDto, GetShortUserDto } from 'src/user/dto/get.user.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -42,6 +42,15 @@ export class AuthService {
   ): Promise<GetShortUserDto> {
     try {
       return await this.userService.register(registerUserDto);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async profile(id: string): Promise<GetAllUserDto> {
+    try {
+      const user = await this.userService.findOneAllInfo(id);
+      return user;
     } catch (error) {
       throw new BadRequestException(error);
     }

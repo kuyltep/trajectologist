@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { LoginUserDto, RegisterUserDto } from 'src/auth/dto/auth.user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { GetShortUserDto } from './dto/get.user.dto';
+import { GetAllUserDto, GetShortUserDto } from './dto/get.user.dto';
 import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UserService {
@@ -39,6 +39,27 @@ export class UserService {
         },
       });
       return new_user;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async findOneAllInfo(id: string): Promise<GetAllUserDto> {
+    try {
+      const user = await this.prismaService.user.findFirst({
+        where: {
+          id,
+        },
+        include: {
+          profession: true,
+          user_competencies: {
+            include: {
+              competency: true,
+            },
+          },
+        },
+      });
+      return user;
     } catch (error) {
       throw new BadRequestException(error);
     }

@@ -30,7 +30,7 @@ model Competency {
   updated_at DateTime @updatedAt
   steps Step[] @relation("step-competency")
   users_competency UserCompetency[] 
-  profession Profession[] @relation("competency-profession")
+  professions Profession[] @relation("competency-profession")
 }
 
 model UserCompetency {
@@ -39,8 +39,8 @@ model UserCompetency {
   competency_id String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  user User @relation(references: [id], fields: [userId])
-  userId String
+  user User @relation(references: [id], fields: [user_id])
+  user_id String
   is_completed Boolean @default(false)
   steps UserStep[]
 }

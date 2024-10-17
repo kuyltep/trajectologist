@@ -1,8 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto, RegisterUserDto } from './dto/auth.user.dto';
-import { ApiBody, ApiResponse } from '@nestjs/swagger';
-import { GetShortUserDto } from 'src/user/dto/get.user.dto';
+import { ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
+import { GetAllUserDto, GetShortUserDto } from 'src/user/dto/get.user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -23,5 +23,13 @@ export class AuthController {
     @Body() registerUserDto: RegisterUserDto,
   ): Promise<GetShortUserDto> {
     return this.authService.registerUser(registerUserDto);
+  }
+
+  @ApiBearerAuth('auth')
+  @Get('/profile')
+  @ApiResponse({ type: GetAllUserDto })
+  async profile(@Request() req): Promise<GetAllUserDto> {
+    const { user_id } = req.user;
+    return this.authService.profile(user_id);
   }
 }
