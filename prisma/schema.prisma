@@ -12,17 +12,24 @@ model User{
   id String @unique @id @default(uuid())
   login String @unique
   password String
-  firstName String
-  lastName String
-  professions Profession[] @relation("user-profession")
+  first_name String
+  last_name String
+  birthday DateTime?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  profession Profession? @relation("user-profession", references: [id], fields: [profession_id])
+  profession_id String?
   user_competencies UserCompetency[]
 }
 
 model Competency {
   id String @id @unique @default(uuid())
   name String @unique
+  description String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
   steps Step[] @relation("step-competency")
-  users_competency UserCompetency[]
+  users_competency UserCompetency[] 
   profession Profession[] @relation("competency-profession")
 }
 
@@ -30,17 +37,34 @@ model UserCompetency {
   id String @unique @id @default(uuid())
   competency Competency @relation(fields: [competency_id], references: [id])
   competency_id String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
   user User @relation(references: [id], fields: [userId])
   userId String
   is_completed Boolean @default(false)
-  steps Step[]
+  steps UserStep[]
 }
 
 model Profession {
   id String @unique @id @default(uuid())
   name String @unique
+  description String
+  salary Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
   competencies Competency[] @relation("competency-profession")
   users User[] @relation("user-profession")
+}
+
+model UserStep {
+  id String @unique @id @default(uuid())
+  is_completed Boolean @default(false)
+  step Step @relation(references: [id], fields: [step_id])
+  step_id String
+  user_competency UserCompetency @relation(references: [id], fields: [user_competency_id])
+  user_competency_id String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model Step {
@@ -49,5 +73,7 @@ model Step {
   description String
   competency Competency @relation(name: "step-competency", fields: [competency_id], references: [id])
   competency_id String
-  users_competencies UserCompetency[]
+  users_steps UserStep[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }

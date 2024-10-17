@@ -1,5 +1,5 @@
 services:
-  postgresql:
+  postgres:
     image: postgres:latest
     container_name: trajectologist_bd
     ports:
@@ -11,3 +11,5 @@ services:
     command: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
+volumes:
+  postgres_data:
