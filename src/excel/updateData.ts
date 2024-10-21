@@ -33,8 +33,10 @@ async function createOrUpdateProfession(
 ) {
   try {
     const name = row.getCell('A').value.toString().trim();
-    const description = row.getCell('B').toString().trim();
-    const salary = Number(row.getCell('C').value);
+    const description = row.getCell('B').value.toString().trim();
+    const salary = Number(
+      row.getCell('C').value.toLocaleString().split(' ').join(''),
+    );
     await prisma.profession.upsert({
       where: { name },
       create: {
@@ -57,9 +59,9 @@ async function createOrUpdateCopetency(
   prisma: PrismaService,
 ) {
   try {
-    const name = row.getCell('A').toString().trim();
-    const description = row.getCell('B').toString().trim();
-    const profession = row.getCell('C').toString().trim();
+    const name = row.getCell('A').value.toString().trim();
+    const description = row.getCell('B').value.toString().trim();
+    const profession = row.getCell('C').value.toString().trim();
     await prisma.competency.upsert({
       where: {
         name,
@@ -98,14 +100,8 @@ async function createOrUpdateStep(row: ExcelJs.Row, prisma: PrismaService) {
         },
       },
     });
-    await prisma.step.upsert({
-      where: {
-        id: steps.steps[0]?.id,
-        competency: {
-          name: competency,
-        },
-      },
-      create: {
+    await prisma.step.create({
+      data: {
         name,
         description,
         competency: {
@@ -113,10 +109,6 @@ async function createOrUpdateStep(row: ExcelJs.Row, prisma: PrismaService) {
             name: competency,
           },
         },
-      },
-      update: {
-        name,
-        description,
       },
     });
   } catch (error) {
