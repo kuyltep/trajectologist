@@ -10,6 +10,8 @@ import AuthContext from "@/components/AuthContext";
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
 import PreferencesScreen from "@/components/screens/PreferencesScreen";
+import ProfessionsScreen from "@/components/screens/ProfessionScreen";
+import ProfessionMoreInfoScreen from "@/components/screens/ProfessionMoreInfoScreen";
 const Stack = createStackNavigator();
 
 export default function HomeScreen() {
@@ -21,6 +23,11 @@ export default function HomeScreen() {
             <Stack.Screen
               name="Home"
               component={AppHomeScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Profession"
+              component={ProfessionsScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -36,6 +43,11 @@ export default function HomeScreen() {
             <Stack.Screen
               name="Preferences"
               component={PreferencesScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ProfessionMoreInfo"
+              component={ProfessionMoreInfoScreen}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>
