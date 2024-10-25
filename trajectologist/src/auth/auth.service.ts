@@ -14,9 +14,11 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
   ) {}
-  async loginUser(
-    loginUserDto: LoginUserDto,
-  ): Promise<{ access_token: string; userId: string }> {
+  async loginUser(loginUserDto: LoginUserDto): Promise<{
+    access_token: string;
+    userId: string;
+    professionId: string | null;
+  }> {
     try {
       const user = await this.userService.findOne(loginUserDto.login);
       const isCompare = await bcrypt.compare(
@@ -31,6 +33,7 @@ export class AuthService {
           login: user.login,
           user_id: user.id,
         }),
+        professionId: user.profession_id,
         userId: user.id,
       };
     } catch (error) {

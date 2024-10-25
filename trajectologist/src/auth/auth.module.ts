@@ -17,13 +17,7 @@ import { AuthGuard } from './strategy/jwt.strategy';
     }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
-  providers: [
-    AuthService,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthGuard,
-    // },
-  ],
+  providers: [AuthService],
   controllers: [AuthController],
 })
 export class AuthModule {}

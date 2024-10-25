@@ -9,6 +9,8 @@ import { diskStorage } from 'multer';
 import { ProfessionModule } from 'src/profession/profession.module';
 import { CompetencyModule } from 'src/competency/competency.module';
 import { StepModule } from 'src/step/step.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from 'src/auth/strategy/jwt.strategy';
 
 @Module({
   imports: [
@@ -34,6 +36,12 @@ import { StepModule } from 'src/step/step.module';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule {}
