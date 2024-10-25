@@ -12,7 +12,7 @@ export class CompetencyController {
   @ApiBearerAuth('auth')
   @Get('/profession')
   async getCompetenciesForProfession(@Request() req) {
-    return this.comptencyService.getCompetenciesForProfession(req.user.id);
+    return this.comptencyService.getCompetenciesForProfession(req.user.user_id);
   }
 
   @ApiBearerAuth('auth')
@@ -31,7 +31,7 @@ export class CompetencyController {
   ): Promise<UserCompetency> {
     return this.comptencyService.updateUserCompetency(
       updateUserCompetencyDto,
-      req.user.id,
+      req.user.user_id,
       id,
     );
   }
