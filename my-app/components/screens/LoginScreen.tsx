@@ -1,4 +1,4 @@
-import { useLoginMutation } from "@/api/loginApiSlice";
+import { useGetProfileQuery, useLoginMutation } from "@/api/loginApiSlice";
 import React, { useContext, useRef, useState } from "react";
 import { Tooltip } from "react-native-tooltip-mroads";
 import {
@@ -23,28 +23,28 @@ const LoginScreen = ({ navigation }) => {
   const [loginMutation, { isLoading, isSuccess }] = useLoginMutation();
 
   const handleLogin = async () => {
-    // try {
-    // const { data, error } = await loginMutation({
-    //   login: username,
-    //   password,
-    // });
-    // if (error || !data) {
-    //   setLoginError("Возникла ошибка при входе!"); // Более информативное сообщение об ошибке
-    //   if (tooltipRef.current) {
-    //     tooltipRef.current.show();
-    //   }
-    //   return;
-    // }
-    // dispatch(setToken({ token: data?.access_token }));
-    // dispatch(setUserId({ userId: data?.userId }));
-    navigation.navigate("Preferences");
-    // } catch (err) {
-    //   console.error("Login error:", err); // Логируем ошибку в консоль
-    //   setLoginError("Возникла непредвиденная ошибка."); // Общее сообщение об ошибке
-    //   if (tooltipRef.current) {
-    //     tooltipRef.current.show();
-    //   }
-    // }
+    try {
+      const { data, error } = await loginMutation({
+        login: username,
+        password,
+      });
+      if (error || !data) {
+        setLoginError("Возникла ошибка при входе!"); // Более информативное сообщение об ошибке
+        if (tooltipRef.current) {
+          tooltipRef.current.show();
+        }
+        return;
+      }
+      dispatch(setToken({ token: data?.access_token }));
+      dispatch(setUserId({ userId: data?.userId }));
+      navigation.navigate(data.professionId ? "Home" : "Preferences");
+    } catch (err) {
+      console.error("Login error:", err); // Логируем ошибку в консоль
+      setLoginError("Возникла непредвиденная ошибка."); // Общее сообщение об ошибке
+      if (tooltipRef.current) {
+        tooltipRef.current.show();
+      }
+    }
   };
 
   const styles = StyleSheet.create({
