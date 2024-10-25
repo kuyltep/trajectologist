@@ -6,13 +6,20 @@ const selectedSlice = createSlice({
     selectedSkillsIds: [],
     salary: 0,
     potencialProfessions: [],
+    moreInfoProfessionId: "",
+    moreInfoProfession: {},
     selectedProfessionId: "",
     selectedProfession: {},
     competencies: [],
+    selectedSkills: [],
   },
   reducers: {
     setSelectedSkillsIds(state, { payload }) {
       state.selectedSkillsIds = payload;
+    },
+    setSelectedSkills(state, { payload }) {
+      state.selectedSkills = payload;
+      state.selectedSkillsIds = payload.map((item) => item.value);
     },
     setSalary(state, { payload }) {
       state.salary = payload;
@@ -29,6 +36,12 @@ const selectedSlice = createSlice({
     setComepetencies(state, { payload }) {
       state.competencies = payload;
     },
+    setMoreInfoProfessionId(state, { payload }) {
+      state.moreInfoProfessionId = payload;
+    },
+    setMoreInfoProfession(state, { payload }) {
+      state.moreInfoProfession = payload;
+    },
   },
 });
 
@@ -39,5 +52,8 @@ export const {
   setSelectedProfessionId,
   setSelectedSkillsIds,
   setComepetencies,
+  setMoreInfoProfession,
+  setMoreInfoProfessionId,
+  setSelectedSkills,
 } = selectedSlice.actions;
 export default selectedSlice.reducer;
