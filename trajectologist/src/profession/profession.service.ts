@@ -17,18 +17,24 @@ export class ProfessionService {
     try {
       const userCompetencies = selectProfessionDto.competencies_id.map(
         async (competency_id) => {
-          await this.prismaService.$transaction(async (tx) => {
-            await tx.userCompetency.create({
+          const userCompetency =
+            await this.prismaService.userCompetency.findFirst({
+              where: {
+                competency_id: competency_id,
+                user_id: userId,
+              },
+            });
+          if (!userCompetency) {
+            await this.prismaService.userCompetency.create({
               data: {
                 competency_id,
                 user_id: userId,
                 is_completed: true,
               },
             });
-          });
+          }
         },
       );
-
       await Promise.all(userCompetencies);
 
       return await this.prismaService.profession.findMany({
@@ -43,6 +49,21 @@ export class ProfessionService {
               },
             },
           },
+        },
+      });
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async getAllProfessionInfoById(id: string) {
+    try {
+      return await this.prismaService.profession.findUnique({
+        where: {
+          id: id,
+        },
+        include: {
+          competencies: true,
         },
       });
     } catch (error) {

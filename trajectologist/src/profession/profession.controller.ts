@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Post, Req, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+  Request,
+} from '@nestjs/common';
 import { ProfessionService } from './profession.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
@@ -8,7 +17,7 @@ import {
 import { Profession } from '@prisma/client';
 
 @ApiTags('profession')
-@Controller('professi1on')
+@Controller('profession')
 export class ProfessionController {
   constructor(private readonly professionService: ProfessionService) {}
 
@@ -20,7 +29,7 @@ export class ProfessionController {
   ): Promise<Profession[]> {
     return this.professionService.getProfessionsForUser(
       selectProfessionDto,
-      req.user.id,
+      req.user.user_id,
     );
   }
 
@@ -32,13 +41,19 @@ export class ProfessionController {
   ): Promise<Profession> {
     return this.professionService.selectProfession(
       selectProfessionDto,
-      req.user.id,
+      req.user.user_id,
     );
+  }
+
+  @ApiBearerAuth('auth')
+  @Get('/:id')
+  async getAllProfessionInfoById(@Param('id') id: string) {
+    return this.professionService.getAllProfessionInfoById(id);
   }
 
   @ApiBearerAuth('auth')
   @Delete('/user')
   async deleteUserProfession(@Request() req) {
-    return this.professionService.deleteUserProfession(req.user.id);
+    return this.professionService.deleteUserProfession(req.user.user_id);
   }
 }
