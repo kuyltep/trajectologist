@@ -1,4 +1,18 @@
-import React, { useState } from "react";
+import {
+  useGetAllCompetenciesQuery,
+  usePostPotencialUserProfessionsMutation,
+} from "@/api/selectedApiSlice";
+import {
+  setComepetencies,
+  setPotencialProfessions,
+  setSalary,
+  setSelectedSkills,
+  setSelectedSkillsIds,
+} from "@/store/slices/selectProfession";
+import { RootState } from "@/store/store";
+import React, { useEffect, useState } from "react";
+import { Tooltip } from "react-native-tooltip-mroads";
+
 import {
   View,
   Text,
@@ -9,20 +23,43 @@ import {
   TouchableOpacity,
 } from "react-native";
 import SelectMultiple from "react-native-select-multiple";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
-const PreferencesScreen = () => {
-  const [selectedSkills, setSelectedSkills] = useState([]);
-  const [desiredSalary, setDesiredSalary] = useState("");
+const PreferencesScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const selected = useSelector(
+    (state: RootState) => state.selected.selectedSkills
+  );
+  const selectedIds = useSelector(
+    (state: RootState) => state.selected.selectedSkillsIds
+  );
+  const competencies = useSelector(
+    (state: RootState) => state.selected.competencies
+  );
+  const salary = useSelector((state: RootState) => state.selected.salary);
+  const [error, setError] = useState("");
 
-  const skills = [
-    { value: "1", label: "JavaScript" },
-    { value: "2", label: "React Native" },
-    { value: "3", label: "Redux" },
-    { value: "4", label: "Node.js" },
-    { value: "5", label: "TypeScript" },
-    // ... другие навыки
-  ];
+  const { data, isError, isLoading } = useGetAllCompetenciesQuery(null);
 
+  const restructedData = data?.map((item) => {
+    return {
+      label: item.name,
+      value: item.id,
+    };
+  });
+
+  const setSalaryStore = (value: string) => {
+    dispatch(setSalary(+value));
+  };
+
+  useEffect(() => {
+    if (isError) {
+      setError("Ошибка при загрузке компетенций");
+    } else if (restructedData) {
+      dispatch(setComepetencies(restructedData));
+    }
+  }, [data, isError]);
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -69,6 +106,12 @@ const PreferencesScreen = () => {
       fontSize: 16,
       color: "#fff", // Белый текст
     },
+    tooltip: {
+      // Новый стиль для текста тултипа
+      color: "white",
+      backgroundColor: "red",
+      textAlign: "center",
+    },
     multiSelectContainer: {
       borderRadius: 15,
       backgroundColor: "#e57454", // Светло-оранжевый
@@ -106,12 +149,56 @@ const PreferencesScreen = () => {
     },
   });
 
-  const onSelectionsChange = (selectedItems: string[]) => {
-    setSelectedSkills(selectedItems);
+  const onSelectionsChange = (selectedItems: object[]) => {
+    dispatch(setSelectedSkills(selectedItems));
+  };
+
+  const [
+    postPotencialProfessions,
+    {
+      isLoading: isPosting,
+      isSuccess,
+      data: professionsData,
+      error: professionsError,
+    },
+  ] = usePostPotencialUserProfessionsMutation();
+
+  const handleSelectProfessionsForUser = async () => {
+    if (!selected.length || !salary) {
+      setError("Выберите навыки и укажите желаемую зарплату"); // Более информативное сообщение
+      return;
+    }
+
+    try {
+      const response = await postPotencialProfessions({
+        competencies_id: selectedIds,
+        salary,
+      }).unwrap();
+
+      dispatch(setPotencialProfessions(response));
+
+      console.log("Успешно подобранные профессии:", response);
+      navigation.navigate("Profession");
+    } catch (err) {
+      console.error("Ошибка при подборе профессий:", err);
+      setError("Ошибка при подборе профессий. Попробуйте еще раз."); //  Сообщение об ошибке
+    }
   };
 
   return (
     <View style={styles.container}>
+      <Tooltip
+        isVisible={error.length > 0}
+        onClose={() => setError("")}
+        height={60}
+        width={200}
+        backgroundColor="transparent"
+        popoverOffset={{ x: 0, y: -100 }}
+        withPointer={false}
+        placement="top"
+      >
+        <Text style={styles.tooltip}>{error}</Text>
+      </Tooltip>
       <ImageBackground
         source={require("@/assets/images/screen1.jpg")}
         style={styles.container} // Растягиваем изображение на весь экран
@@ -129,8 +216,8 @@ const PreferencesScreen = () => {
               style={{ maxHeight: 200, borderRadius: 30, padding: 5 }}
             >
               <SelectMultiple
-                items={skills}
-                selectedItems={selectedSkills}
+                items={competencies}
+                selectedItems={selected}
                 onSelectionsChange={onSelectionsChange}
                 rowStyle={styles.selectMultipleItem}
                 labelStyle={styles.selectMultipleLabel}
@@ -145,23 +232,27 @@ const PreferencesScreen = () => {
               style={styles.input}
               placeholder="Введите желаемую зарплату"
               keyboardType="numeric"
-              value={desiredSalary}
-              onChangeText={setDesiredSalary}
+              value={String(salary)}
+              onChangeText={(value) => setSalaryStore(value)}
               placeholderTextColor="#ffffff80" // Светло-серый плейсхолдер
             />
           </View>
 
           <View>
-            <TouchableOpacity onPress={() => {}} style={styles.button}>
+            <TouchableOpacity
+              onPress={handleSelectProfessionsForUser} // Используйте правильную функцию
+              style={styles.button}
+              disabled={isPosting} // Отключаем кнопку во время запроса
+            >
               <Text
                 style={{
-                  color: "#fff",
-                  fontWeight: 700,
                   fontSize: 18,
+                  fontWeight: 700,
+                  color: "#fff",
                   textAlign: "center",
                 }}
               >
-                Подобрать профессии
+                {isPosting ? "Подбор..." : "Подобрать профессии"}{" "}
               </Text>
             </TouchableOpacity>
           </View>
