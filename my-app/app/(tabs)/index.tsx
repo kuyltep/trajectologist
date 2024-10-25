@@ -9,7 +9,7 @@ import RegisterScreen from "@/components/screens/RegisterScreen";
 import AuthContext from "@/components/AuthContext";
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
-const Tab = createBottomTabNavigator();
+import PreferencesScreen from "@/components/screens/PreferencesScreen";
 const Stack = createStackNavigator();
 
 export default function HomeScreen() {
@@ -31,6 +31,11 @@ export default function HomeScreen() {
             <Stack.Screen
               name="Register"
               component={RegisterScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Preferences"
+              component={PreferencesScreen}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>
