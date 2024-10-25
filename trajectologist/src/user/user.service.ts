@@ -51,7 +51,11 @@ export class UserService {
           id,
         },
         include: {
-          profession: true,
+          profession: {
+            include: {
+              competencies: true,
+            },
+          },
           user_competencies: {
             include: {
               competency: true,
