@@ -1,11 +1,31 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { IGetRegisterUser, ILogin, IRegister } from "./types/ILogin";
+import {
+  IGetRegisterUser,
+  IGetUserData,
+  ILogin,
+  IRegister,
+} from "./types/ILogin";
+import { RootState } from "@/store/store";
 
 export const loginApiSlice = createApi({
   reducerPath: "loginApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3010/auth" }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:3010/auth",
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).login.token;
+
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+
+      return headers;
+    },
+  }),
   endpoints: (builder) => ({
-    login: builder.mutation<{ access_token: string; userId: string }, ILogin>({
+    login: builder.mutation<
+      { access_token: string; userId: string; professionId: string | null },
+      ILogin
+    >({
       query: (credentials) => ({
         url: "/login",
         method: "POST",
@@ -19,7 +39,14 @@ export const loginApiSlice = createApi({
         body: userData,
       }),
     }),
+    getProfile: builder.query<IGetUserData, null>({
+      query: () => ({
+        url: "/profile",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation } = loginApiSlice;
+export const { useLoginMutation, useRegisterMutation, useGetProfileQuery } =
+  loginApiSlice;
