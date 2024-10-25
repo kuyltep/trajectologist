@@ -12,7 +12,7 @@ export class StepController {
   @ApiBearerAuth('auth')
   @Get('/step/user')
   async getUserSteps(@Request() req): Promise<UserStep[]> {
-    return this.stepService.getUserSteps(req.user.id);
+    return this.stepService.getUserSteps(req.user.user_id);
   }
 
   @ApiBearerAuth('auth')
