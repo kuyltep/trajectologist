@@ -1,4 +1,4 @@
-import { ICompetency } from "./ICompetency";
+import { ICompetency, IUserStep } from "./ICompetency";
 import { IProfessionAllInfo } from "./IProfession";
 
 export interface ILogin {
@@ -15,8 +15,8 @@ export interface IRegister {
 
 export interface IGetRegisterUser {
   id: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   login: string;
 }
 
@@ -28,7 +28,13 @@ export interface IGetUserData extends IGetRegisterUser {
 
 export interface IUserCompetency {
   id: string;
+  created_at: Date;
+  updated_at: Date;
   competency: ICompetency;
   competency_id: string;
-  is_completed: string;
+  is_completed: boolean;
+}
+
+export interface IUserCompetencyAll extends IUserCompetency {
+  steps: IUserStep[];
 }
