@@ -15,7 +15,7 @@ const loginSlice = createSlice({
       state.userId = payload.userId;
     },
     setUser: (state, { payload }) => {
-      state.user = payload.user;
+      state.user = payload;
     },
   },
 });
