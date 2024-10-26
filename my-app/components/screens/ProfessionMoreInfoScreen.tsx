@@ -6,6 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
   ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store/store";
@@ -13,9 +15,10 @@ import { useGetProfessionAllInfoQuery } from "@/api/selectedApiSlice";
 import { usePostSelectUserProfessionMutation } from "@/api/selectedApiSlice";
 import { IProfessionAllInfo } from "@/api/types/IProfession";
 import { useGetProfileQuery } from "@/api/loginApiSlice";
-import { setMoreInfoProfession } from "@/store/slices/selectProfession";
+import { setMoreInfoProfession } from "@/store/slices/selectSlice";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
+import { setActiveCompetencyId } from "@/store/slices/userSile";
 
 const ProfessionMoreInfoScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -68,8 +71,7 @@ const ProfessionMoreInfoScreen = ({ navigation }) => {
         const result = await selectProfession({
           profession_id: professionId,
         }).unwrap();
-        console.log(result);
-        navigation("Home");
+        navigation.navigate("Home");
       }
     } catch (e) {
       console.log(e);
@@ -133,62 +135,70 @@ const ProfessionMoreInfoScreen = ({ navigation }) => {
   });
 
   return professionData && userData ? (
-    <View style={{ flex: 1 }}>
-      <ImageBackground
-        source={require("@/assets/images/screen2.jpg")}
-        resizeMode="repeat"
-        resizeMethod="resize"
-      />
-
-      <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-        <Icon name="arrow-back" size={24} color="white" />{" "}
-      </TouchableOpacity>
-      <ScrollView style={styles.container}>
-        <View>
-          <Text style={styles.title}>{professionData.name}</Text>
-          <Text style={styles.description}>{professionData.description}</Text>
-
-          <View style={styles.infoBlock}>
-            <Text style={styles.infoBlockTitle}>
-              З/п- от {professionData.salary}
-            </Text>
-          </View>
-
-          <View style={styles.infoBlock}>
-            <Text style={styles.infoBlockTitle}>Ваши навыки:</Text>
-            {userCompetenciesInProfession.length &&
-              userCompetenciesInProfession.map((competency) => (
-                <Text key={competency.id} style={styles.competencyItem}>
-                  - {competency.competency.name}
-                </Text>
-              ))}
-          </View>
-
-          <View style={styles.infoBlock}>
-            <Text style={styles.infoBlockTitle}>
-              Навыки которые стоит приобрести :
-            </Text>
-            {competenciesToAcquire.length &&
-              competenciesToAcquire.map((competency) => (
-                <Text key={competency.id} style={styles.competencyItem}>
-                  - {competency.name}
-                </Text>
-              ))}
-          </View>
-          <View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleSelectProfession}
-              disabled={isSelecting}
-            >
-              <Text style={styles.buttonText}>
-                {isSelecting ? "Выбор..." : "Выбрать профессию"}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"} // Поведение для iOS и Android
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+    >
+      <View style={{ flex: 1, backgroundColor: "orange" }}>
+        <ImageBackground
+          source={require("@/assets/images/orange.jpeg")}
+          resizeMode="repeat"
+          style={{ flex: 1 }}
+        >
+          <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+            <Icon name="arrow-back" size={24} color="white" />{" "}
+          </TouchableOpacity>
+          <ScrollView style={styles.container}>
+            <View>
+              <Text style={styles.title}>{professionData.name}</Text>
+              <Text style={styles.description}>
+                {professionData.description}
               </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
-    </View>
+
+              <View style={styles.infoBlock}>
+                <Text style={styles.infoBlockTitle}>
+                  З/п- от {professionData.salary}
+                </Text>
+              </View>
+
+              <View style={styles.infoBlock}>
+                <Text style={styles.infoBlockTitle}>Ваши навыки:</Text>
+                {userCompetenciesInProfession.length &&
+                  userCompetenciesInProfession.map((competency) => (
+                    <Text key={competency.id} style={styles.competencyItem}>
+                      - {competency.competency.name}
+                    </Text>
+                  ))}
+              </View>
+
+              <View style={styles.infoBlock}>
+                <Text style={styles.infoBlockTitle}>
+                  Навыки которые стоит приобрести :
+                </Text>
+                {competenciesToAcquire.length &&
+                  competenciesToAcquire.map((competency) => (
+                    <Text key={competency.id} style={styles.competencyItem}>
+                      - {competency.name}
+                    </Text>
+                  ))}
+              </View>
+              <View>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleSelectProfession}
+                  disabled={isSelecting}
+                >
+                  <Text style={styles.buttonText}>
+                    {isSelecting ? "Выбор..." : "Выбрать профессию"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+        </ImageBackground>
+      </View>
+    </KeyboardAvoidingView>
   ) : null;
 };
 
