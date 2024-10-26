@@ -33,6 +33,7 @@ const RegisterScreen = ({ navigation }) => {
     container: {
       flex: 1,
       overflow: "hidden",
+      backgroundColor: "orange",
     },
     title: {
       marginBottom: 20,
@@ -68,11 +69,9 @@ const RegisterScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require("@/assets/images/login.jpg")}
-        resizeMethod="resize"
-        resizeMode="cover"
-        width={100}
-        height={100}
+        source={require("@/assets/images/orange.jpeg")}
+        resizeMode="repeat"
+        style={{ flex: 1 }}
       >
         <View style={{ padding: 20, marginTop: 20 }}>
           <Text style={styles.title}>Регистрация</Text>
