@@ -8,7 +8,7 @@ import {
   setSalary,
   setSelectedSkills,
   setSelectedSkillsIds,
-} from "@/store/slices/selectProfession";
+} from "@/store/slices/selectSlice";
 import { RootState } from "@/store/store";
 import React, { useEffect, useState } from "react";
 import { Tooltip } from "react-native-tooltip-mroads";
@@ -63,7 +63,7 @@ const PreferencesScreen = ({ navigation }) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "#F8E3D4",
+      backgroundColor: "orange",
       overflow: "hidden",
     },
     contentContainer: {
@@ -187,23 +187,24 @@ const PreferencesScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Tooltip
-        isVisible={error.length > 0}
-        onClose={() => setError("")}
-        height={60}
-        width={200}
-        backgroundColor="transparent"
-        popoverOffset={{ x: 0, y: -100 }}
-        withPointer={false}
-        placement="top"
-      >
-        <Text style={styles.tooltip}>{error}</Text>
-      </Tooltip>
       <ImageBackground
-        source={require("@/assets/images/screen1.jpg")}
-        style={styles.container} // Растягиваем изображение на весь экран
-        resizeMode="cover"
+        source={require("@/assets/images/orange.jpeg")}
+        resizeMode="repeat"
+        style={{ flex: 1 }}
       >
+        <Tooltip
+          isVisible={error.length > 0}
+          onClose={() => setError("")}
+          height={60}
+          width={200}
+          backgroundColor="transparent"
+          popoverOffset={{ x: 0, y: -100 }}
+          withPointer={false}
+          placement="top"
+        >
+          <Text style={styles.tooltip}>{error}</Text>
+        </Tooltip>
+
         <ScrollView contentContainerStyle={styles.contentContainer}>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Пора узнать Вас получше</Text>
