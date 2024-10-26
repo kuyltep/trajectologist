@@ -10,15 +10,24 @@ export class CompetencyController {
   constructor(private readonly comptencyService: CompetencyService) {}
 
   @ApiBearerAuth('auth')
-  @Get('/profession')
-  async getCompetenciesForProfession(@Request() req) {
-    return this.comptencyService.getCompetenciesForProfession(req.user.user_id);
+  @Get('/profession/:id')
+  async getCompetenciesForProfession(@Request() req, @Param('id') id: string) {
+    return this.comptencyService.getCompetenciesForProfession(
+      req.user.user_id,
+      id,
+    );
   }
 
   @ApiBearerAuth('auth')
   @Get('/list')
   async getListCompetencies(): Promise<Competency[]> {
     return this.comptencyService.getListCompetencies();
+  }
+
+  @ApiBearerAuth('auth')
+  @Get('/:id')
+  async getCompetencyById(@Param('id') id: string) {
+    return this.comptencyService.getCompetencyById(id);
   }
 
   @ApiBearerAuth('auth')
