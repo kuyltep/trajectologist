@@ -1,5 +1,5 @@
 import { useGetProfileQuery, useLoginMutation } from "@/api/loginApiSlice";
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Tooltip } from "react-native-tooltip-mroads";
 import {
   View,
@@ -10,7 +10,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useDispatch } from "react-redux";
-import { setToken, setUserId } from "@/store/slices/loginSlice";
+import { setToken, setUser, setUserId } from "@/store/slices/loginSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { setProfessionId } from "@/store/slices/userSile";
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
@@ -19,8 +22,24 @@ const LoginScreen = ({ navigation }) => {
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const dispatch = useDispatch();
   const tooltipRef = useRef(null);
-
+  const token = useSelector((state: RootState) => state.login.token);
   const [loginMutation, { isLoading, isSuccess }] = useLoginMutation();
+
+  const {
+    data,
+    isError,
+    isLoading: userIsLoading,
+  } = useGetProfileQuery(null, {
+    skip: !token.length,
+  }); // Вызов хука вне useEffect
+
+  useEffect(() => {
+    if (userIsLoading) {
+      // Обработка загрузки, если необходимо (например, отображение индикатора загрузки)
+    } else if (data) {
+      dispatch(setUser(data)); // Обновляем store, если данные получены
+    }
+  }, [data, isError, isLoading, token]); // Добавляем isLoading в зависимости
 
   const handleLogin = async () => {
     try {
@@ -35,6 +54,7 @@ const LoginScreen = ({ navigation }) => {
         }
         return;
       }
+      dispatch(setProfessionId(data.professionId));
       dispatch(setToken({ token: data?.access_token }));
       dispatch(setUserId({ userId: data?.userId }));
       navigation.navigate(data.professionId ? "Home" : "Preferences");
@@ -51,6 +71,7 @@ const LoginScreen = ({ navigation }) => {
     container: {
       flex: 1,
       overflow: "hidden",
+      backgroundColor: "orange",
     },
     title: {
       marginBottom: 20,
@@ -91,24 +112,24 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Tooltip
-        isVisible={loginError.length > 0}
-        onClose={() => setLoginError("")}
-        height={60}
-        width={200}
-        backgroundColor="transparent"
-        popoverOffset={{ x: 0, y: -100 }}
-        withPointer={false}
-        placement="top"
-      >
-        <Text style={styles.tooltip}>{loginError}</Text>
-      </Tooltip>
       <ImageBackground
-        source={require("@/assets/images/login.jpg")}
-        resizeMethod="resize"
-        resizeMode="cover"
+        source={require("@/assets/images/orange.jpeg")}
+        resizeMode="repeat"
         style={{ flex: 1 }}
       >
+        <Tooltip
+          isVisible={loginError.length > 0}
+          onClose={() => setLoginError("")}
+          height={60}
+          width={200}
+          backgroundColor="transparent"
+          popoverOffset={{ x: 0, y: -100 }}
+          withPointer={false}
+          placement="top"
+        >
+          <Text style={styles.tooltip}>{loginError}</Text>
+        </Tooltip>
+
         <View style={{ padding: 20, marginTop: 20 }}>
           <Text style={styles.title}>Вход</Text>
           <TextInput
