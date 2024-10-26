@@ -6,10 +6,12 @@ import {
   ImageBackground,
   TouchableOpacity,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store/store"; // Путь к вашему store
-import { setMoreInfoProfessionId } from "@/store/slices/selectProfession"; // Импортируйте ваше действие
+import { setMoreInfoProfessionId } from "@/store/slices/selectSlice"; // Импортируйте ваше действие
 import { useGetProfileQuery } from "@/api/loginApiSlice";
 import { Tooltip } from "react-native-tooltip-mroads";
 import { setUser } from "@/store/slices/loginSlice";
@@ -43,7 +45,7 @@ const ProfessionsScreen = ({ navigation }) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "#e57454",
+      backgroundColor: "orange",
       overflow: "hidden",
     },
     tooltip: {
@@ -92,49 +94,55 @@ const ProfessionsScreen = ({ navigation }) => {
   });
 
   return (
-    <View style={styles.container}>
-      <ImageBackground
-        source={require("@/assets/images/screen1.jpg")} // Путь к вашему изображению
-        style={styles.container}
-        resizeMode="cover"
-      >
-        <Tooltip
-          isVisible={error.length > 0}
-          onClose={() => setError("")}
-          height={60}
-          width={200}
-          backgroundColor="transparent"
-          popoverOffset={{ x: 0, y: -100 }}
-          withPointer={false}
-          placement="top"
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"} // Поведение для iOS и Android
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+    >
+      <View style={styles.container}>
+        <ImageBackground
+          source={require("@/assets/images/orange.jpeg")}
+          resizeMode="repeat"
+          style={{ flex: 1 }}
         >
-          <Text style={styles.tooltip}>{error}</Text>
-        </Tooltip>
-        <ScrollView contentContainerStyle={styles.contentContainer}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>
-              Мы подобрали профессии подходящие под Ваши интересы.{"\n"}
-              {"\n"}Выберите одну из них:
-            </Text>
-          </View>
+          <Tooltip
+            isVisible={error.length > 0}
+            onClose={() => setError("")}
+            height={60}
+            width={200}
+            backgroundColor="transparent"
+            popoverOffset={{ x: 0, y: -100 }}
+            withPointer={false}
+            placement="top"
+          >
+            <Text style={styles.tooltip}>{error}</Text>
+          </Tooltip>
+          <ScrollView contentContainerStyle={styles.contentContainer}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>
+                Мы подобрали профессии подходящие под Ваши интересы.{"\n"}
+                {"\n"}Выберите одну из них:
+              </Text>
+            </View>
 
-          <View style={styles.professionsContainer}>
-            {professions.map((profession) => {
-              return (
-                <TouchableOpacity
-                  key={profession.id}
-                  style={styles.professionItem}
-                  onPress={() => handleProfessionPress(profession.id)}
-                >
-                  <Text style={styles.professionName}>{profession.name}</Text>
-                  <Text style={styles.plusText}>{profession.salary}+</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </ScrollView>
-      </ImageBackground>
-    </View>
+            <View style={styles.professionsContainer}>
+              {professions.map((profession) => {
+                return (
+                  <TouchableOpacity
+                    key={profession.id}
+                    style={styles.professionItem}
+                    onPress={() => handleProfessionPress(profession.id)}
+                  >
+                    <Text style={styles.professionName}>{profession.name}</Text>
+                    <Text style={styles.plusText}>{profession.salary}+</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </ScrollView>
+        </ImageBackground>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
