@@ -10,14 +10,14 @@ export class StepController {
   constructor(private readonly stepService: StepService) {}
 
   @ApiBearerAuth('auth')
-  @Get('/step/user')
+  @Get('/user')
   async getUserSteps(@Request() req): Promise<UserStep[]> {
     return this.stepService.getUserSteps(req.user.user_id);
   }
 
   @ApiBearerAuth('auth')
   @ApiBody({ type: UpdateStepDto })
-  @Patch('/step/user')
+  @Patch('/user')
   async updateUserStep(
     @Body() updateUserStep: UpdateStepDto,
   ): Promise<UserStep> {
@@ -25,7 +25,13 @@ export class StepController {
   }
 
   @ApiBearerAuth('auth')
-  @Get('/step/competency/:id')
+  @Get('/:id')
+  async getUserStepAllInfo(@Param('id') id: string) {
+    return this.stepService.getUserStepAllInfo(id);
+  }
+
+  @ApiBearerAuth('auth')
+  @Get('/competency/:id')
   @ApiParam({ type: String, name: 'competency-id', required: true })
   async getStepsForCompetency(
     @Request() req,

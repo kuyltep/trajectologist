@@ -42,6 +42,24 @@ export class StepService {
         where: {
           user_competency_id: id,
         },
+        include: {
+          step: true,
+        },
+      });
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async getUserStepAllInfo(id: string) {
+    try {
+      return await this.prismaService.userStep.findUnique({
+        where: {
+          id,
+        },
+        include: {
+          step: true,
+        },
       });
     } catch (error) {
       throw new BadRequestException(error);
