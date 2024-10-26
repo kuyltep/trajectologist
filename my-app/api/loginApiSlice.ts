@@ -6,6 +6,7 @@ import {
   IRegister,
 } from "./types/ILogin";
 import { RootState } from "@/store/store";
+import { setUser } from "@/store/slices/loginSlice";
 
 export const loginApiSlice = createApi({
   reducerPath: "loginApi",
@@ -44,6 +45,16 @@ export const loginApiSlice = createApi({
         url: "/profile",
         method: "GET",
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        // onQueryStarted для обновления store
+        try {
+          const { data: user } = await queryFulfilled;
+          console.log(user);
+          dispatch(setUser(user));
+        } catch (error) {
+          console.error("Ошибка обновления компетенции в store:", error);
+        }
+      },
     }),
   }),
 });
