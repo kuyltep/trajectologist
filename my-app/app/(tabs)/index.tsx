@@ -3,15 +3,20 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
-import { AppHomeScreen } from "@/components/screens/HomeScreen";
 import LoginScreen from "@/components/screens/LoginScreen";
 import RegisterScreen from "@/components/screens/RegisterScreen";
 import AuthContext from "@/components/AuthContext";
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
+
 import PreferencesScreen from "@/components/screens/PreferencesScreen";
 import ProfessionsScreen from "@/components/screens/ProfessionScreen";
 import ProfessionMoreInfoScreen from "@/components/screens/ProfessionMoreInfoScreen";
+import CompetencyMoreInfoScreen from "@/components/screens/CompetencyAllInfoScreen";
+import StepMoreInfoScreen from "@/components/screens/StepMoreInfoScree";
+import AppHomeScreen from "@/components/screens/HomeScreen";
+import CompetencyMapScreen from "@/components/screens/CompetencyMapScreen";
+import StepsMapScreen from "@/components/screens/StepsMapScreen";
 const Stack = createStackNavigator();
 
 export default function HomeScreen() {
@@ -23,6 +28,11 @@ export default function HomeScreen() {
             <Stack.Screen
               name="Home"
               component={AppHomeScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="CompetencyMap"
+              component={CompetencyMapScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -48,6 +58,21 @@ export default function HomeScreen() {
             <Stack.Screen
               name="ProfessionMoreInfo"
               component={ProfessionMoreInfoScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="CompetencyMoreInfo"
+              component={CompetencyMoreInfoScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="StepsMap"
+              component={StepsMapScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="StepMoreInfo"
+              component={StepMoreInfoScreen}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>
