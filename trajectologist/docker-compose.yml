@@ -7,9 +7,13 @@ services:
     image: trajectologist
     ports:
       - 3010:3010
-    env: './'
+    env_file: .env
     depends_on:
       - postgres
+    networks:
+      - trajectologist_network
+    links:
+      - postgres:db
   postgres:
     image: postgres:latest
     container_name: trajectologist_bd
@@ -20,7 +24,11 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_DATABASE=trajectologist
     command: postgres
+    networks:
+      - trajectologist_network
     volumes:
       - postgres_data:/var/lib/postgresql/data
 volumes:
   postgres_data:
+networks:
+  trajectologist_network:
