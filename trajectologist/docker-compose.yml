@@ -1,4 +1,15 @@
 services:
+  trajectologist_backend:
+    build:
+      context: './'
+      dockerfile: Dockerfile
+    container_name: 'trajectologist_backend'
+    image: trajectologist
+    ports:
+      - 3010:3010
+    env: './'
+    depends_on:
+      - postgres
   postgres:
     image: postgres:latest
     container_name: trajectologist_bd
